@@ -88,9 +88,9 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/django-app:latest
             
             echo "Updating the running service..."
-            docker service update --image ${{ secrets.DOCKER_USERNAME }}/django-app:latest django-test-stack_django
+            docker service update --image ${{ secrets.DOCKER_USERNAME }}/django-app:latest django_stack_django
             
             echo "Deploying updates with zero downtime..."
-            docker stack deploy -c /home/${{ secrets.SERVER_USER }}/docker-swarm.yml django-test-stack
+            docker stack deploy -c /home/docker-swarm.yml django_stack
             
             echo "Deployment completed successfully!"
