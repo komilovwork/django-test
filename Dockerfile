@@ -18,4 +18,4 @@ ENV DATABASE_URL=${DATABASE_URL}
 EXPOSE 8000
 
 # Run the application
-CMD ["python", "manage.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "core.wsgi:application"]
