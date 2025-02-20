@@ -53,17 +53,17 @@ services:
       PGPASSWORD: my_user_password_pool_io_project
     entrypoint: ["/bin/sh", "-c"]
     command: >
-      "while true; do
-         pg_dump -U postgres -h db -d pool_io_project > /backups/db_backup_$(date +%Y-%m-%d_%H-%M-%S).sql;
+      while true; do
+         pg_dump -U postgres -h db -d pool_io_project > /backups/db_backup_$$(date +%Y-%m-%d_%H-%M-%S).sql;
          echo 'Database backup created!';
          sleep 172800;
-       done"
+       done
     depends_on:
       - db
     deploy:
       replicas: 1
     networks:
-      - backend  # Backup xizmati faqat backend tarmog‘ida ishlaydi
+      - backend  # Backup service only runs in the backend network
 
 volumes:
   db_data:
