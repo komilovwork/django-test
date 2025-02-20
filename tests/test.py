@@ -19,4 +19,4 @@ def test_function():
     assert 5 == 5
 
 def test1_function():
-    assert 5 == 5
+    assert 4 == 4
