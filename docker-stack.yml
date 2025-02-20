@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  django:
+    image: abdulazizhub/django-app:latest
+    ports:
+      - "8000:8000"
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - redis
+      - db
+
+  redis:
+    image: redis:latest
+    deploy:
+      replicas: 1
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    deploy:
+      replicas: 1

@@ -1,0 +1,22 @@
+docker swarm init
+
+
+docker stack deploy -c docker-stack.yml django_test_stack
+
+
+docker service ls
+
+
+# Agar siz boshqa manager qo‘shmoqchi bo‘lsangiz, quyidagi buyruqni ishlatishingiz mumkin
+docker swarm join-token manager
+
+
+# Agar siz xizmatlarni har bir node bo‘yicha tekshirmoqchi bo‘lsangiz
+docker service ps django_test_stack
+
+
+# remove swarm node
+docker stack rm django-test-stack
+
+
+docker stack ls
