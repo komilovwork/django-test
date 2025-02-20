@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  backend:
+    driver: overlay
+
 services:
   django:
     image: abdulazizhub/django-app:latest
@@ -15,16 +19,52 @@ services:
     depends_on:
       - redis
       - db
+    networks:
+      - backend
 
   redis:
     image: redis:latest
     deploy:
       replicas: 1
+    networks:
+      - backend  # Redis faqat backend xizmatlari bilan ishlaydi
 
   db:
     image: postgres:latest
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: my_user_password_pool_io_project
+      POSTGRES_DB: pool_io_project
+    volumes:
+      - db_data:/var/lib/postgresql/data
     deploy:
       replicas: 1
+    networks:
+      - backend  # Ma’lumotlar bazasi faqat backend xizmatlari bilan ishlaydi
+
+  db_backup:
+    image: postgres:latest
+    volumes:
+      - db_backups:/backups
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: my_user_password_pool_io_project
+      POSTGRES_DB: pool_io_project
+      PGPASSWORD: my_user_password_pool_io_project
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "while true; do
+         pg_dump -U postgres -h db -d pool_io_project > /backups/db_backup_$(date +%Y-%m-%d_%H-%M-%S).sql;
+         echo 'Database backup created!';
+         sleep 172800;
+       done"
+    depends_on:
+      - db
+    deploy:
+      replicas: 1
+    networks:
+      - backend  # Backup xizmati faqat backend tarmog‘ida ishlaydi
+
+volumes:
+  db_data:
+  db_backups:
