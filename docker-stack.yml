@@ -9,6 +9,9 @@ services:
       replicas: 2
       restart_policy:
         condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 5s
     depends_on:
       - redis
       - db
