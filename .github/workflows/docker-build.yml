@@ -3,7 +3,7 @@ name: Django CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Change to your deployment branch if needed
+      - main
   pull_request:
     branches:
       - main
@@ -34,6 +34,7 @@ jobs:
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DEBUG: ${{ secrets.DEBUG }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           source venv/bin/activate
           pytest
@@ -46,6 +47,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Create .env file with secrets
+        run: |
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
+          echo "DEBUG=${{ secrets.DEBUG }}" >> .env
+          echo ".env file created successfully!"
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -63,7 +70,3 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/django-app:latest
-          build-args: |
-            SECRET_KEY: ${{ secrets.SECRET_KEY }}
-            DEBUG: ${{ secrets.DEBUG }}
-
