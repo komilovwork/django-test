@@ -1,26 +1,18 @@
 # Use official Python image
-FROM python:3.11
+FROM python:3.10
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy the project files
-COPY . /app
-
-# Copy the .env file into the container
-COPY .env /app/.env
-
 # Install dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Ensure Django loads the .env file
-RUN pip install django-environ
+# Copy project files
+COPY . .
 
-# Set environment variables inside the image
-ENV ENV_FILE_PATH=/app/.env
-
-# Expose the port Django runs on
+# Expose FastAPI port
 EXPOSE 8000
 
-# Run Django using Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "core.wsgi:application"]
+# Run FastAPI app
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
